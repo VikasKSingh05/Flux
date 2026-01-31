@@ -1,0 +1,26 @@
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.tab,
+.active {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.tab:hover {
+  background: var(--border);
+}
+
+.active {
+  background: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}

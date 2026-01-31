@@ -1,0 +1,43 @@
+.wrapper {
+  width: 100%;
+}
+
+.message,
+.error,
+.empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text);
+}
+
+.error {
+  color: #e74c3c;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.loadMore {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.loadMore:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.loadMore:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
