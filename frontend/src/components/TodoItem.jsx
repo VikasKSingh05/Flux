@@ -25,6 +25,12 @@ export function TodoItem({ todo }) {
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+        layout: { type: "spring", stiffness: 300, damping: 30 } // Smoother layout shift
+      }}
       whileHover={{ scale: 1.01, backgroundColor: "rgba(0,0,0,0.02)" }}
       className={clsx(
         "group flex items-center gap-4 p-4 mb-3 rounded-2xl bg-white dark:bg-zinc-900 border transition-all",

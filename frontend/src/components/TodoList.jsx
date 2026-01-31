@@ -76,7 +76,7 @@ export function TodoList() {
             animate="visible"
             className="list-none p-0 m-0 space-y-2"
           >
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               {todos.map((todo) => (
                 <TodoItem key={todo._id} todo={todo} />
               ))}
