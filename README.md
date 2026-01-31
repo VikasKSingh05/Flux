@@ -8,7 +8,7 @@ Production-ready Todo application with authentication, persistence, caching, and
 
 ## Quick Start
 
-1. **Backend:** `cd backend && npm install && cp .env.example .env` then set `MONGODB_URI` and `JWT_SECRET`. Run `npm run dev`.
+1. **Backend:** `cd backend && npm install` then set .env `MONGODB_URI` and `JWT_SECRET`. Run `npm run dev`.
 2. **Frontend:** `cd frontend && npm install && npm run dev`.
 3. Open http://localhost:5173 — sign up or log in, then use the Todo app.
 
