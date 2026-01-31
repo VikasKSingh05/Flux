@@ -3,7 +3,6 @@
  * Optimistic updates via useUpdateTodo / useDeleteTodo.
  */
 import { useUpdateTodo, useDeleteTodo } from '../hooks/useTodosQuery';
-import styles from './TodoItem.module.css';
 
 export function TodoItem({ todo }) {
   const updateTodo = useUpdateTodo();
@@ -21,7 +20,7 @@ export function TodoItem({ todo }) {
 
   return (
     <li
-      className={`${styles.item} ${todo.completed ? styles.completed : ''}`}
+      className={`flex items-center gap-3 p-3 mb-2 rounded-lg border border-gray-200 dark:border-[#0f3460] bg-white dark:bg-[#16213e] ${todo.completed ? '' : ''}`}
       data-testid="todo-item"
     >
       <input
@@ -29,13 +28,17 @@ export function TodoItem({ todo }) {
         checked={!!todo.completed}
         onChange={handleToggle}
         disabled={isUpdating}
-        className={styles.checkbox}
+        className="w-5 h-5 cursor-pointer accent-blue-500"
         aria-label={`Mark "${todo.title}" as ${todo.completed ? 'incomplete' : 'complete'}`}
       />
-      <span className={styles.title}>{todo.title}</span>
+      <span
+        className={`flex-1 break-words ${todo.completed ? 'line-through opacity-70' : ''}`}
+      >
+        {todo.title}
+      </span>
       <button
         type="button"
-        className={styles.deleteBtn}
+        className="w-8 h-8 flex items-center justify-center rounded bg-transparent border-0 text-inherit opacity-60 hover:opacity-100 hover:bg-red-500/20 hover:text-red-500 disabled:cursor-not-allowed text-xl cursor-pointer"
         onClick={handleDelete}
         disabled={isDeleting}
         aria-label={`Delete "${todo.title}"`}

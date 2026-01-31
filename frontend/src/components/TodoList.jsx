@@ -5,7 +5,6 @@
 import { useTodosQuery } from '../hooks/useTodosQuery';
 import { TodoItem } from './TodoItem';
 import { FilterTabs } from './FilterTabs';
-import styles from './TodoList.module.css';
 
 export function TodoList() {
   const {
@@ -20,21 +19,25 @@ export function TodoList() {
   } = useTodosQuery();
 
   if (isLoading) {
-    return <div className={styles.message}>Loading todos…</div>;
+    return (
+      <div className="w-full text-center py-6 text-gray-900 dark:text-gray-100">
+        Loading todos…
+      </div>
+    );
   }
   if (isError) {
     return (
-      <div className={styles.error}>
+      <div className="w-full text-center py-6 text-red-500">
         {error?.response?.data?.error || error?.message || 'Failed to load todos'}
       </div>
     );
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className="w-full">
       <FilterTabs />
       {todos.length === 0 ? (
-        <p className={styles.empty}>
+        <p className="text-center py-6 text-gray-900 dark:text-gray-100">
           {filter === 'completed'
             ? 'No completed todos.'
             : filter === 'active'
@@ -43,7 +46,7 @@ export function TodoList() {
         </p>
       ) : (
         <>
-          <ul className={styles.list}>
+          <ul className="list-none p-0 m-0">
             {todos.map((todo) => (
               <TodoItem key={todo._id} todo={todo} />
             ))}
@@ -51,7 +54,7 @@ export function TodoList() {
           {hasNextPage && (
             <button
               type="button"
-              className={styles.loadMore}
+              className="block w-full mt-4 py-3 rounded-lg border border-gray-200 dark:border-[#0f3460] bg-white dark:bg-[#16213e] text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-[#0f3460] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer text-[0.95rem]"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
             >

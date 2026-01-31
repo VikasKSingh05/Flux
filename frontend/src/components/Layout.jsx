@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useUIStore } from '../store/useUIStore';
-import styles from './Layout.module.css';
 
 export function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -17,16 +16,20 @@ export function Layout({ children }) {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  const isDark = theme === 'dark';
+
   return (
-    <div className={styles.wrapper} data-theme={theme}>
-      <header className={styles.header}>
-        <Link to="/" className={styles.logo}>
+    <div
+      className={`min-h-screen ${isDark ? 'dark' : ''} bg-gray-100 dark:bg-[#1a1a2e] text-gray-900 dark:text-gray-100`}
+    >
+      <header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-[#16213e] border-b border-gray-200 dark:border-[#0f3460] shadow-sm">
+        <Link to="/" className="text-2xl font-bold text-inherit no-underline">
           Todo
         </Link>
-        <div className={styles.actions}>
+        <div className="flex items-center gap-4">
           <button
             type="button"
-            className={styles.themeBtn}
+            className="p-2 rounded-lg border border-gray-200 dark:border-[#0f3460] bg-transparent text-xl cursor-pointer"
             onClick={toggleTheme}
             aria-label="Toggle theme"
           >
@@ -34,15 +37,19 @@ export function Layout({ children }) {
           </button>
           {user && (
             <>
-              <span className={styles.email}>{user.email}</span>
-              <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
+              <span className="text-sm text-inherit opacity-90">{user.email}</span>
+              <button
+                type="button"
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm cursor-pointer border-0"
+                onClick={handleLogout}
+              >
                 Logout
               </button>
             </>
           )}
         </div>
       </header>
-      <main className={styles.main}>{children}</main>
+      <main className="max-w-2xl mx-auto py-8 px-4">{children}</main>
     </div>
   );
 }

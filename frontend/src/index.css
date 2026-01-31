@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+/* Class-based dark mode for theme toggle */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
