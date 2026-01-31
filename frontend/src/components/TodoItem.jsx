@@ -1,12 +1,12 @@
-/**
- * Single todo: title, completed toggle, delete.
- * Optimistic updates via useUpdateTodo / useDeleteTodo.
- */
 import { useUpdateTodo, useDeleteTodo } from '../hooks/useTodosQuery';
+import { motion } from 'framer-motion';
+import { Check, Trash2 } from 'lucide-react';
+import clsx from 'clsx';
 
 export function TodoItem({ todo }) {
   const updateTodo = useUpdateTodo();
   const deleteTodo = useDeleteTodo();
+  // We can use generic loading state or specific id check if needed
   const isUpdating = updateTodo.isPending && updateTodo.variables?.id === todo._id;
   const isDeleting = deleteTodo.isPending && deleteTodo.variables === todo._id;
 
@@ -14,37 +14,62 @@ export function TodoItem({ todo }) {
     updateTodo.mutate({ id: todo._id, completed: !todo.completed });
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     deleteTodo.mutate(todo._id);
   };
 
   return (
-    <li
-      className={`flex items-center gap-3 p-3 mb-2 rounded-lg border border-gray-200 dark:border-[#0f3460] bg-white dark:bg-[#16213e] ${todo.completed ? '' : ''}`}
-      data-testid="todo-item"
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+      whileHover={{ scale: 1.01, backgroundColor: "rgba(0,0,0,0.02)" }}
+      className={clsx(
+        "group flex items-center gap-4 p-4 mb-3 rounded-2xl bg-white dark:bg-zinc-900 border transition-all",
+        todo.completed ? "border-transparent opacity-60" : "border-zinc-100 dark:border-zinc-800 shadow-sm"
+      )}
     >
-      <input
-        type="checkbox"
-        checked={!!todo.completed}
-        onChange={handleToggle}
+      <button
+        onClick={handleToggle}
         disabled={isUpdating}
-        className="w-5 h-5 cursor-pointer accent-blue-500"
-        aria-label={`Mark "${todo.title}" as ${todo.completed ? 'incomplete' : 'complete'}`}
-      />
+        className={clsx(
+          "relative flex-shrink-0 w-6 h-6 rounded-full border-2 transition-colors duration-300 flex items-center justify-center",
+          todo.completed
+            ? "bg-emerald-500 border-emerald-500"
+            : "border-zinc-300 dark:border-zinc-600 hover:border-emerald-400"
+        )}
+        aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
+      >
+        <motion.div
+          initial={false}
+          animate={{ scale: todo.completed ? 1 : 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        >
+          <Check size={14} className="text-white stroke-[3]" />
+        </motion.div>
+      </button>
+
       <span
-        className={`flex-1 break-words ${todo.completed ? 'line-through opacity-70' : ''}`}
+        className={clsx(
+          "flex-1 text-lg transition-all duration-300 break-words",
+          todo.completed
+            ? "text-zinc-400 line-through decoration-zinc-300 dark:decoration-zinc-600"
+            : "text-zinc-700 dark:text-zinc-200"
+        )}
       >
         {todo.title}
       </span>
+
       <button
-        type="button"
-        className="w-8 h-8 flex items-center justify-center rounded bg-transparent border-0 text-inherit opacity-60 hover:opacity-100 hover:bg-red-500/20 hover:text-red-500 disabled:cursor-not-allowed text-xl cursor-pointer"
         onClick={handleDelete}
         disabled={isDeleting}
-        aria-label={`Delete "${todo.title}"`}
+        className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg"
+        aria-label="Delete todo"
       >
-        {isDeleting ? '…' : '×'}
+        <Trash2 size={18} />
       </button>
-    </li>
+    </motion.li>
   );
 }

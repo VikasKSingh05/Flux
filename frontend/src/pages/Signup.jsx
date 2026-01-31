@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { authApi } from '../api/auth';
 import { useAuth } from '../hooks/useAuth';
+import { motion } from 'framer-motion';
+import { Loader2, Mail, Lock, UserPlus, ArrowRight } from 'lucide-react';
 
 export function Signup() {
   const { login } = useAuth();
@@ -25,65 +27,105 @@ export function Signup() {
     }
   };
 
-  const inputClass =
-    'w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-[#0f3460] bg-white dark:bg-[#0f3460] text-gray-900 dark:text-gray-100 text-base focus:outline-2 focus:outline-blue-500 focus:outline-offset-2';
-
   return (
-    <div className="bg-white dark:bg-[#16213e] border border-gray-200 dark:border-[#0f3460] rounded-xl p-8 max-w-md mx-auto">
-      <h1 className="mb-6 text-3xl text-gray-900 dark:text-gray-100">Sign up</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm text-gray-900 dark:text-gray-100">
-          Email
-          <input
-            type="email"
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Invalid email',
-              },
-            })}
-            className={inputClass}
-            autoComplete="email"
-          />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </label>
-        <label className="flex flex-col gap-1 text-sm text-gray-900 dark:text-gray-100">
-          Password
-          <input
-            type="password"
-            {...register('password', {
-              required: 'Password is required',
-              minLength: { value: 6, message: 'At least 6 characters' },
-            })}
-            className={inputClass}
-            autoComplete="new-password"
-          />
-          {errors.password && (
-            <span className="text-sm text-red-500">{errors.password.message}</span>
-          )}
-        </label>
-        {errors.root && (
-          <p className="py-2 text-sm text-red-500" role="alert">
-            {errors.root.message}
+    <div className="min-h-[80vh] flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+        className="w-full max-w-md"
+      >
+        <div className="bg-white dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="w-12 h-12 bg-emerald-500 rounded-xl mx-auto mb-4 flex items-center justify-center shadow-lg shadow-emerald-500/30"
+            >
+              <UserPlus className="text-white" size={24} />
+            </motion.div>
+            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">Create account</h1>
+            <p className="text-zinc-500 dark:text-zinc-400">Get started with your tasks</p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="space-y-1">
+              <div className="relative group">
+                <Mail className="absolute left-4 top-3.5 text-zinc-400 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Invalid email',
+                    },
+                  })}
+                  className="w-full pl-12 pr-4 py-3 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
+                  autoComplete="email"
+                />
+              </div>
+              {errors.email && (
+                <span className="text-sm text-red-500 pl-1">{errors.email.message}</span>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <div className="relative group">
+                <Lock className="absolute left-4 top-3.5 text-zinc-400 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  {...register('password', {
+                    required: 'Password is required',
+                    minLength: { value: 6, message: 'At least 6 characters' },
+                  })}
+                  className="w-full pl-12 pr-4 py-3 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
+                  autoComplete="new-password"
+                />
+              </div>
+              {errors.password && (
+                <span className="text-sm text-red-500 pl-1">{errors.password.message}</span>
+              )}
+            </div>
+
+            {errors.root && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm rounded-lg text-center"
+              >
+                {errors.root.message}
+              </motion.div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white rounded-xl font-semibold shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} /> Creating account...
+                </>
+              ) : (
+                <>
+                  Get Started <ArrowRight size={20} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            Already have an account?{' '}
+            <Link to="/login" className="text-emerald-500 hover:text-emerald-600 font-medium hover:underline transition-colors">
+              Log in
+            </Link>
           </p>
-        )}
-        <button
-          type="submit"
-          className="py-3 px-6 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold mt-2 border-0 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Creating account…' : 'Create account'}
-        </button>
-      </form>
-      <p className="mt-6 text-sm text-gray-900 dark:text-gray-100 opacity-90">
-        Already have an account?{' '}
-        <Link to="/login" className="text-blue-500 no-underline hover:underline">
-          Log in
-        </Link>
-      </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
