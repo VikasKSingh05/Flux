@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Todo API - Express + MongoDB + JWT",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
