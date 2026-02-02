@@ -23,11 +23,11 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'OK' });
 });
 
+app.use(errorHandler);
+
 app.use((req, res, next) => {
   res.status(404).json({ success: false, error: 'Not found' });
 });
-
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
