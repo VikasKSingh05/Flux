@@ -1,4 +1,4 @@
-# Full-Stack Todo App
+# FLUX - A Full-Stack Todo App
 Production-ready Todo application with authentication, persistence, caching, and offline support.
 
 ## Tech Stack
