@@ -1,17 +1,8 @@
-/**
- * Todo controller: CRUD and list with filter + pagination.
- * All operations are scoped to the authenticated user.
- */
 const Todo = require('../models/Todo');
-const { NotFoundError } = require('../utils/errors');
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
-/**
- * GET /api/todos
- * Query: page, limit, filter (all|active|completed)
- */
 exports.getTodos = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);

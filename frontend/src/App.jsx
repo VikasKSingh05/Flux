@@ -43,7 +43,7 @@ export default function App() {
     setAuthTokenGetter(() => useAuthStore.getState().token);
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     const handleLogout = () => {
       useAuthStore.getState().clearAuth();
       if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {

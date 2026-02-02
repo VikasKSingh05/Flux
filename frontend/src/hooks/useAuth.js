@@ -1,7 +1,3 @@
-/**
- * Auth hook: login, signup, logout, and persist to LocalStorage.
- * Logout clears Zustand and storage, and triggers auth:logout for redirect.
- */
 import { useCallback } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { storage } from '../utils/storage';

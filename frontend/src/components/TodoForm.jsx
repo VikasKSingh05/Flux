@@ -1,6 +1,3 @@
-/**
- * Create-todo form using React Hook Form.
- */
 import { useForm } from 'react-hook-form';
 import { useCreateTodo } from '../hooks/useTodosQuery';
 
@@ -18,7 +15,7 @@ export function TodoForm() {
       await createTodo.mutateAsync({ title: data.title.trim() });
       reset();
     } catch (e) {
-      // Error shown via React Query / toast if you add one
+      // Error handled by React Query
     }
   };
 

@@ -8,14 +8,12 @@ const todoRoutes = require('./src/routes/todoRoutes');
 
 const app = express();
 
-// Configure CORS to accept a comma-separated list of origins from env
 const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
 const allowedOrigins = corsOrigin.split(',').map((s) => s.trim());
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -40,10 +38,8 @@ app.use((req, res, next) => {
   res.status(404).json({ success: false, error: 'Not found' });
 });
 
-// For Vercel Serverless Functions
 module.exports = app;
 
-// For local development (npm run dev)
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   

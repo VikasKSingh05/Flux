@@ -1,7 +1,3 @@
-/**
- * Simple error boundary for React/React Query errors.
- * Shows a user-friendly message and optional retry.
- */
 import { Component } from 'react';
 
 export class ErrorBoundary extends Component {
