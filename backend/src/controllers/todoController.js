@@ -1,4 +1,5 @@
 const Todo = require('../models/Todo');
+const { NotFoundError } = require('../utils/errors');
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;

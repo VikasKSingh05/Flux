@@ -52,14 +52,27 @@ const paginationValidations = [
     .isInt({ min: 1, max: 100 })
     .toInt()
     .withMessage('limit must be between 1 and 100'),
+  query('filter')
+    .optional({ values: 'falsy' })
+    .customSanitizer((v) => (v && typeof v === 'string' ? v.toLowerCase() : v))
+    .isIn(['all', 'active', 'completed'])
+    .withMessage('filter must be all, active, or completed'),
 ];
 
 const reorderValidations = [
   body('todoIds')
-    .isArray({ min: 1 })
-    .withMessage('todoIds must be a non-empty array')
-    .custom((ids) => ids.every((id) => /^[a-fA-F0-9]{24}$/.test(id)))
-    .withMessage('Each todoId must be a valid MongoDB ObjectId'),
+    .isArray({ min: 1, max: 500 })
+    .withMessage('todoIds must be an array of 1–500 items')
+    .custom((ids) => {
+      const seen = new Set();
+      return ids.every((id) => {
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) return false;
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    })
+    .withMessage('Each todoId must be a unique valid MongoDB ObjectId'),
 ];
 
 module.exports = {

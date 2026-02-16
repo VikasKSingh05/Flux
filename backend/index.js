@@ -1,10 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./src/config/db');
 const errorHandler = require('./src/middleware/errorHandler');
+const { NotFoundError } = require('./src/utils/errors');
 const authRoutes = require('./src/routes/authRoutes');
 const todoRoutes = require('./src/routes/todoRoutes');
+
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is required');
+  process.exit(1);
+}
 
 const app = express();
 
@@ -23,7 +31,29 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: { success: false, error: 'Too many requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { success: false, error: 'Too many attempts, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(express.json({ limit: '10kb' }));
+
+app.use('/api', generalLimiter);
+app.use('/api/auth', authLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/todos', todoRoutes);
@@ -32,28 +62,25 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'OK' });
 });
 
+app.use((req, res, next) => next(new NotFoundError('Not found')));
 app.use(errorHandler);
-
-app.use((req, res, next) => {
-  res.status(404).json({ success: false, error: 'Not found' });
-});
 
 module.exports = app;
 
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 5000;
-  
-  const start = async () => {
-    try {
-      await connectDB();
-      app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
-    } catch (err) {
-      console.error('Failed to start server:', err);
-      process.exit(1);
-    }
-  };
+const PORT = process.env.PORT || 5000;
 
-  start();
-}
+const start = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Server running on port ${PORT}`);
+      }
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+};
+
+start();

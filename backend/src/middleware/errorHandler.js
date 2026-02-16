@@ -21,14 +21,18 @@ const errorHandler = (err, req, res, next) => {
     message = 'Invalid ID format';
   }
 
-  if (process.env.NODE_ENV === 'development' && statusCode === 500) {
-    console.error(err.stack);
+  if (statusCode >= 500) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(err.stack);
+    } else {
+      message = 'Internal Server Error';
+    }
   }
 
   res.status(statusCode).json({
     success: false,
     error: message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(process.env.NODE_ENV === 'development' && statusCode >= 500 && { stack: err.stack }),
   });
 };
 
