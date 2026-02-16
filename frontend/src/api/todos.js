@@ -20,4 +20,8 @@ export const todosApi = {
   deleteTodo(id) {
     return apiClient.delete(`/todos/${id}`);
   },
+
+  reorderTodos(todoIds) {
+    return apiClient.patch('/todos/reorder', { todoIds });
+  },
 };

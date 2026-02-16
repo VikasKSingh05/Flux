@@ -132,6 +132,17 @@ export function useUpdateTodo() {
   });
 }
 
+export function useReorderTodos() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (todoIds) => todosApi.reorderTodos(todoIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [TODOS_QUERY_KEY] });
+    },
+  });
+}
+
 export function useDeleteTodo() {
   const queryClient = useQueryClient();
 

@@ -6,6 +6,7 @@ export const apiClient = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
+  timeout: 15000,
 });
 
 let getToken = () => null;
@@ -26,6 +27,12 @@ apiClient.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401) {
       window.dispatchEvent(new CustomEvent('auth:logout'));
+    }
+    if (err.response?.status === 429) {
+      err.message = err.response?.data?.error || 'Too many requests. Please try again later.';
+    }
+    if (err.code === 'ECONNABORTED') {
+      err.message = 'Request timed out. Please try again.';
     }
     return Promise.reject(err);
   }

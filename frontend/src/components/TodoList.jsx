@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTodosQuery } from '../hooks/useTodosQuery';
+import { useTodosQuery, useReorderTodos } from '../hooks/useTodosQuery';
+import { useUIStore } from '../store/useUIStore';
 import { TodoItem } from './TodoItem';
 import { FilterTabs } from './FilterTabs';
 import { Loader2 } from 'lucide-react';
 
 export function TodoList() {
+  const theme = useUIStore((state) => state.theme);
   const {
     todos,
     isLoading,
@@ -15,6 +17,15 @@ export function TodoList() {
     fetchNextPage,
     isFetchingNextPage,
   } = useTodosQuery();
+  const reorderTodos = useReorderTodos();
+
+  const handleMove = (fromIndex, direction) => {
+    const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;
+    if (toIndex < 0 || toIndex >= todos.length) return;
+    const ids = [...todos.map((t) => t._id)];
+    [ids[fromIndex], ids[toIndex]] = [ids[toIndex], ids[fromIndex]];
+    reorderTodos.mutate(ids);
+  };
 
   if (isLoading) {
     return (
@@ -50,6 +61,7 @@ export function TodoList() {
 
       {todos.length === 0 ? (
         <motion.div
+          key={`empty-${theme}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center justify-center py-16 text-center"
@@ -71,14 +83,23 @@ export function TodoList() {
       ) : (
         <>
           <motion.ul
+            key={theme}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="list-none p-0 m-0 space-y-2"
           >
             <AnimatePresence mode="popLayout" initial={false}>
-              {todos.map((todo) => (
-                <TodoItem key={todo._id} todo={todo} />
+              {todos.map((todo, index) => (
+                <TodoItem
+                  key={todo._id}
+                  todo={todo}
+                  canMoveUp={index > 0}
+                  canMoveDown={index < todos.length - 1}
+                  onMoveUp={() => handleMove(index, 'up')}
+                  onMoveDown={() => handleMove(index, 'down')}
+                  isReordering={reorderTodos.isPending}
+                />
               ))}
             </AnimatePresence>
           </motion.ul>

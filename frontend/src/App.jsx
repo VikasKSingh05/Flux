@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './store/useAuthStore';
+import { storage } from './utils/storage';
 import { setAuthTokenGetter } from './api/client';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
@@ -46,6 +47,7 @@ export default function App() {
   useEffect(() => {
     const handleLogout = () => {
       useAuthStore.getState().clearAuth();
+      storage.clearAuth();
       if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
         window.location.href = '/login';
       }
