@@ -6,6 +6,7 @@ const {
   createTodoValidations,
   updateTodoValidations,
   paginationValidations,
+  reorderValidations,
 } = require('../middleware/validateRequest');
 
 const router = express.Router();
@@ -16,6 +17,8 @@ router
   .route('/')
   .get(validate(paginationValidations), todoController.getTodos)
   .post(validate(createTodoValidations), todoController.createTodo);
+
+router.patch('/reorder', validate(reorderValidations), todoController.reorderTodos);
 
 router
   .route('/:id')

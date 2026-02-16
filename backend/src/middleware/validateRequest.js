@@ -54,6 +54,14 @@ const paginationValidations = [
     .withMessage('limit must be between 1 and 100'),
 ];
 
+const reorderValidations = [
+  body('todoIds')
+    .isArray({ min: 1 })
+    .withMessage('todoIds must be a non-empty array')
+    .custom((ids) => ids.every((id) => /^[a-fA-F0-9]{24}$/.test(id)))
+    .withMessage('Each todoId must be a valid MongoDB ObjectId'),
+];
+
 module.exports = {
   validate,
   signupValidations,
@@ -61,4 +69,5 @@ module.exports = {
   createTodoValidations,
   updateTodoValidations,
   paginationValidations,
+  reorderValidations,
 };

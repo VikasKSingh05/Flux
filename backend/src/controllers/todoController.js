@@ -18,7 +18,7 @@ exports.getTodos = async (req, res, next) => {
     if (filterType === 'completed') query.completed = true;
 
     const [todos, total] = await Promise.all([
-      Todo.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Todo.find(query).sort({ order: 1, createdAt: -1 }).skip(skip).limit(limit).lean(),
       Todo.countDocuments(query),
     ]);
 
@@ -45,9 +45,15 @@ exports.getTodos = async (req, res, next) => {
  */
 exports.createTodo = async (req, res, next) => {
   try {
+    const maxOrder = await Todo.findOne({ user: req.user._id })
+      .sort({ order: -1 })
+      .select('order')
+      .lean();
+    const order = (maxOrder?.order ?? -1) + 1;
     const todo = await Todo.create({
       title: req.body.title,
       user: req.user._id,
+      order,
     });
     res.status(201).json({ success: true, data: { todo } });
   } catch (err) {
@@ -86,6 +92,34 @@ exports.updateTodo = async (req, res, next) => {
     if (req.body.completed !== undefined) todo.completed = req.body.completed;
     await todo.save();
     res.json({ success: true, data: { todo } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * PATCH /api/todos/reorder
+ * Body: { todoIds: [id1, id2, ...] }
+ */
+exports.reorderTodos = async (req, res, next) => {
+  try {
+    const { todoIds } = req.body;
+    if (!Array.isArray(todoIds) || todoIds.length === 0) {
+      return res.status(400).json({ success: false, error: 'todoIds must be a non-empty array' });
+    }
+    const userId = req.user._id;
+    const todos = await Todo.find({ _id: { $in: todoIds }, user: userId });
+    if (todos.length !== todoIds.length) {
+      return res.status(400).json({ success: false, error: 'Some todos not found or access denied' });
+    }
+    const updates = todoIds.map((id, index) =>
+      Todo.updateOne({ _id: id, user: userId }, { $set: { order: index } })
+    );
+    await Promise.all(updates);
+    const updated = await Todo.find({ user: userId })
+      .sort({ order: 1, createdAt: -1 })
+      .lean();
+    res.json({ success: true, data: { todos: updated } });
   } catch (err) {
     next(err);
   }
